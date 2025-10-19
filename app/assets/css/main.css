@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+html,body{
+    background-color: #141414;
+    color: white;
+    overflow-x: hidden;
+}
+
+@layer utilities {
+  .padding {
+    @apply p-4 sm:p-12 md:p-16 xl:p-20;
+  }
+  .main_padding {
+    @apply px-4 sm:px-12 md:px-16 xl:px-20
+  }
+}
