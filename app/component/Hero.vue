@@ -1,147 +1,192 @@
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted, type Ref } from "vue";
 import { NuxtImg } from "#components";
+import { useRouter } from "vue-router";
+// Assuming these are local components you are using
 import Box from "./Box.vue";
 import Button from "./Button.vue";
-import InfoBox from "./InfoBox.vue";
 import Text from "./Text.vue";
+import InfoBox from "./InfoBox.vue";
 
-const UsersImg = [
-  { img: "/user.svg" },
-  { img: "/user.svg" },
-  { img: "/user.svg" },
+const router = useRouter();
+
+// --- TYPE-SAFETY DEFINITIONS ---
+interface StatItem {
+  value: string;
+  label: string;
+}
+
+interface InfoItem {
+  icon: string;
+  title: string;
+  subtitle: string;
+  description: string;
+}
+// -------------------------------
+
+// --- COMPONENT DATA (Restored for completeness) ---
+const stats: StatItem[] = [
+  { value: "200+", label: "Happy Customers" },
+  { value: "10K+", label: "Properties for Clients" },
+  { value: "16+", label: "Years of Experience" },
 ];
-const stats = [
-  { value: '300', label: 'Resources available' },
-  { value: '12k', label: 'Users Downloads' },
-  { value: '10k', label: 'Active Users' },
-]
-const infoItems = [
-  {
-    icon: '/icons/infoIcn3.svg',
-    title: 'Latest News Updates',
-    subtitle: 'Stay Current',
-    description: 'Over 1,000 articles published monthly',
-  },
-  {
-    icon: '/icons/infoIcn2.svg',
-    title: 'Expert Contributors',
-    subtitle: 'Trusted Insights',
-    description: '50+ renowned AI experts on our team',
-  },
-  {
-    icon: '/icons/infoIcn1.svg',
-    title: 'Global Readership',
-    subtitle: 'Worldwide Impact',
-    description: '2 million monthly readers',
-  },
-]
 
+const infoItems: InfoItem[] = [
+  {
+    icon: "/icons/infoIcn1.svg",
+    title: "Find Your Dream Home",
+    subtitle: "AI-Powered Search",
+    description: "Advanced search for perfect matches.",
+  },
+  {
+    icon: "/icons/infoIcn2.svg",
+    title: "Unlock Property Value",
+    subtitle: "Expert Valuations",
+    description: "Get precise, expert valuations.",
+  },
+  {
+    icon: "/icons/infoIcn3.svg",
+    title: "Effortless Property Management",
+    subtitle: "Full-Service Handling",
+    description: "We handle everything for you.",
+  },
+  {
+    icon: "/icons/highlightIcn.svg",
+    title: "Smart Investments: Informed Decisions",
+    subtitle: "Data-Driven Insights",
+    description: "Data-driven insights for growth.",
+  },
+];
+// -------------------------------
+
+// --- IMAGE ROTATOR LOGIC ---
+
+// 1. Define the array of image sources
+const images: string[] = [
+  "/heroImg.svg",
+  "/heroImg2.svg",
+  "/heroImg3.png",
+];
+
+// 2. Reactive state to track the index
+const currentImageIndex: Ref<number> = ref(0);
+const intervalDuration: number = 10000;
+
+let rotationInterval: number | null = null;
+
+const nextImage = (): void => {
+  currentImageIndex.value = (currentImageIndex.value + 1) % images.length;
+};
+
+onMounted(() => {
+  rotationInterval = window.setInterval(nextImage, intervalDuration);
+});
+onUnmounted(() => {
+  if (rotationInterval !== null) {
+    window.clearInterval(rotationInterval);
+  }
+});
+
+const currentImageSrc = (): string => images[currentImageIndex.value]!;
+// -------------------------------------------------------------
 </script>
 
 <template>
-  <div class="w-full flex flex-col sm:flex-row items-center h-auto ">
-    <div class="flex flex-col justify-center items-start  xl:gap-y-3 sm:w-1/2">
-      <div class="padding space-y-2 mt-5 sm:mt-0">
-        <Text
-        text="Your Journey to Tomorrow Begins Here"
-        size="sm"
-        color="secondary"
-        class="font-normal"
-        />
-        
-        <Text
-        text="Explore the Frontiers of Artificial Intelligence"
-        size="2xl"
-        color="white"
-        class="font-semibold leading-snug"
-        />
-        
-        <Text
-        text="Welcome to the epicenter of AI innovation. FutureTech AI News is your passport to a world where machines think, learn, and reshape the future. Join us on this visionary expedition into the heart of AI."
-        size="sm"
-        color="secondary"
-        class="font-normal"
-        /> 
-      </div>
-        <Box :stats="stats"/>
-    </div>
-
-    <div class="relative flex items-center justify-center sm:flex-col  sm:w-1/2 lg:w-auto xl:w-auto h-auto border-l border-[#282828]">
-    <NuxtImg
-      src="/heroImg.svg"
-      alt="Hero image"
-      height="500"
-      width="500"
-      format="webp"
-      quality="80"
-      class=" object-cover h-82 sm:h-auto mask-fade-bottom-left "
-    />
-
-    <div class="md:w-72 lg:w-auto absolute sm:top-[55%] flex flex-col gap-3 px-3 py-4 border border-[#282828] shadow-lg
-            left-1/4 transform -translate-x-1/5
-             md:left-36 lg:left-1/3 sm:transform sm:-translate-x-1/2">
-      <div class="flex items-center justify-start -space-x-3">
-        <NuxtImg
-          v-for="(user, index) in UsersImg"
-          :key="index"
-          :src="user.img"
-          loading="lazy"
-          format="webp"
-          quality="80"
-          alt="User image"
-          class="w-6 h-6 sm:w-6 sm:h-6 md:w-8 md:h-8 xl:w-10 xl:h-10 rounded-full border border-[#282828] object-cover"
-        />
-      </div>
-
-      <div class="flex flex-col mt-2">
-        <Text
-          text="Explore 1000+ resources"
-          size="sm"
-          color="white"
-          class="font-semibold"
-        />
-        <Text
-          text="Over 1,000 articles on emerging tech trends and breakthroughs."
-          size="sm"
-          color="primary"
-          class="font-normal"
-        />
-          <Button
-        text="Explore Resources"
-        icon="mdi:arrow-top-right"
-        color="secondary"
-        class="mt-2" 
-        iconColor="yellow"
-        @click="() => console.log('Explore clicked')"
-      />
-      </div>
- 
-    </div>
-  </div>
   <div>
+    <div
+      class="grid grid-cols-1 space-y-5 lg:space-y-0 lg:grid-cols-2 w-full items-center min-h-screen"
+    >
+      <div class="flex flex-col main_padding gap-y-3 lg:space-y-5 pt-6 lg:pt-0">
+        <Text
+          text="Your Journey to Tomorrow Begins Here"
+          size="xs"
+          color="primary"
+          class="px-2 inline-block"
+        />
+        <Text
+          text="Explore the Frontiers of Artificial Intelligence"
+          size="2xl"
+          color="white"
+          class="px-2 inline-block"
+        />
+        <Text
+          text="Welcome to the epicenter of AI innovation. FutureTech AI News is your passport to a world where machines think, learn, and reshape the future. Join us on this visionary expedition into the heart of AI."
+          size="sm"
+          color="secondary"
+          class="px-2 inline-block"
+        />
+        <Button
+          text="Explore Resources"
+          icon="mdi:arrow-top-right"
+          color="secondary"
+          class="mt-2 lg:px-20 sm:px-4"
+          iconColor="yellow"
+          @click="() => router.push('/view-blog')"
+        />
+        <Box :stats="stats" />
+      </div>
+
+      <div class="w-full aspect-video h-full relative overflow-hidden">
+        <Transition name="fade" mode="out-in">
+          <NuxtImg
+            :key="currentImageIndex"
+            :src="currentImageSrc()"
+            alt="Rotating Image"
+            format="webp"
+            quality="95"
+            class="w-full h-full object-cover"
+          > 
+          </NuxtImg>
+        </Transition>
+
+        <div
+          class="absolute bottom-4 right-4 text-white bg-black bg-opacity-50 p-1 rounded"
+        >
+          Image {{ currentImageIndex + 1 }} of {{ images.length }}
+        </div>
+      </div>
+    </div>
+
+    <InfoBox :items="infoItems" />
   </div>
-</div>
-<InfoBox :items="infoItems"/>
 </template>
 
 <style scoped>
-.mask-fade-bottom-left {
-  /* Fade starts from bottom-left corner and fades toward top-right */
-  mask-image: linear-gradient(
-    to top right,
-    black 55%,
-    transparent 70%
-  );
-  -webkit-mask-image: linear-gradient(
-    to bottom left,
-    black 55%,
-    transparent 70%
-  );
+/* Vue Transition CSS classes for a simple fade effect. */
 
-  mask-repeat: no-repeat;
-  mask-size: cover;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: cover;
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease; /* 1000ms fade duration */
+}
+
+.fade-leave-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+</style>
+
+<style scoped>
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s ease; /* 1000ms fade duration */
+}
+
+.fade-leave-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
 </style>

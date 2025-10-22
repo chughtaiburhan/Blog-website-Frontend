@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import EBookes from '~/component/EBookes.vue'
 import Hero from '~/component/Hero.vue'
 import HighlightsSection from '~/component/HighlightsSection.vue'
 import ViewAllBlogs from '~/component/ViewAllBlogs.vue'
@@ -16,5 +17,6 @@ useHead({
     <Hero />
     <HighlightsSection />
     <ViewAllBlogs />
+    <EBookes/>
   </div>
 </template>

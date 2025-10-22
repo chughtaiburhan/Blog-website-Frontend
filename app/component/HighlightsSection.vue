@@ -38,20 +38,23 @@ const features = [
     />
   </div>
 
-  <div class="flex flex-col border border-[#282828] w-full py-5 lg:py-6 xl:py-10 bg-[#0a0a0a]">
+  <div
+    class="flex flex-col border border-[#282828] w-full py-5 lg:py-6 xl:py-10 bg-[#0a0a0a]"
+  >
     <div class="main_padding">
-      <div
-        class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-        <div class="flex-shrink-0 text-left sm:text-left lg:max-w-[40%] xl:max-w-xl py-6 lg:py-0">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+        <div
+          class="flex-shrink-0 text-left sm:text-left lg:max-w-[40%] xl:max-w-xl py-6 lg:py-0"
+        >
           <NuxtImg
             src="/icons/highlightIcn.svg"
             alt="HighlightIcon"
-            height="70"
-            width="70"
+            height="200"
+            width="200"
             format="webp"
             quality="80"
             loading="lazy"
-            class="pb-4 sm:mx-0 w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20"
+            class="pb-4 sm:mx-0 w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 object-contain"
           />
           <Text
             text="Research Insights Blogs"
@@ -63,16 +66,18 @@ const features = [
             text="Dive deep into future technology concepts with our research section."
             size="sm"
             color="secondary"
-            class="font-normal "
+            class="font-normal"
           />
         </div>
 
         <div class="flex-1 xl:max-w3xl py-6 lg:py-0">
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 lg:gap-10]">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 lg:gap-10]"
+          >
             <div
               v-for="(feature, index) in features"
               :key="index"
-              class="group  border border-[#282828] bg-[#191919] cursor-pointer hover:bg-zinc-900/50 p-4 sm:p-5 rounded-lg transition-colors duration-200"
+              class="group border border-[#282828] bg-[#191919] cursor-pointer hover:bg-zinc-900/50 p-4 sm:p-5 rounded-lg transition-colors duration-200"
             >
               <h3 class="text-lg sm:text-xl font-semibold mb-2 text-white">
                 {{ feature.title }}

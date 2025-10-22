@@ -88,9 +88,9 @@ useHead(() => {
 
 <template>
   <div
-    class="main_padding border-b border-[#282828] py-10 sm:py-16 lg:py-20 space-y-2 sm:space-y-5 flex-1 lg:flex items-center justify-between"
+    class="main_padding border-b border-[#282828] py-10 sm:py-16 lg:py-20 flex-1 lg:flex items-center justify-between"
   >
-    <div class="shrink-0">
+    <div class="shrink-0 space-y-2 sm:space-y-5">
       <Text
         text="A Knowledge Treasure Trove"
         size="sm"

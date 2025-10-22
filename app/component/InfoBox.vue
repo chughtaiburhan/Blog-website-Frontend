@@ -3,27 +3,28 @@ defineProps<{
   items: {
     icon: string
     title: string
-    subtitle: string
+    // Made subtitle optional with '?'
+    subtitle?: string
     description: string
   }[]
 }>()
 </script>
 
 <template>
-  <div class="grid grid-cols-1 sm:grid-cols-3 border border-[#282828] divide-y sm:divide-y-0 sm:divide-x divide-[#282828] bg-[#0D0D0D]">
+  <div class="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-4  divide-y sm:divide-y-0 sm:divide-x divide-[#282828] bg-[#0D0D0D]">
     <div
       v-for="(item, index) in items"
       :key="index"
-      class="flex items-start justify-between p-4 md:p-4 lg:p-6 xl:p-10 rounded-b-xl hover:bg-[#141414] transition-colors duration-300"
+      class="flex items-start justify-between p-4 md:p-4 lg:p-6 xl:p-10 border border-[#282828]  hover:bg-[#141414] transition-colors duration-300"
     >
       <div class="flex flex-col gap-1 max-w-[220px]">
-        <NuxtImg :src="item.icon" loading="lazy" alt="icon" class="w-5 h-5 xl:w-5 xl:h-5 mb-3" />
+        <NuxtImg :src="item.icon" loading="lazy" alt="icon" class="w-5 h-5 xl:w-5 xl:h-5 mb-3 object-contain" />
 
         <h3 class="text-white text-base lg:text-lg font-semibold">
           {{ item.title }}
         </h3> 
 
-        <p class="text-[#A1A1A1] text-sm">
+        <p v-if="item.subtitle" class="text-[#A1A1A1] text-sm">
           {{ item.subtitle }}
         </p>
 
@@ -32,7 +33,6 @@ defineProps<{
         </p>
       </div>
 
-      <!-- arrow icon -->
       <div
         class="w-5 h-5 sm:w-6 sm:h-6 xl:w-8 xl:h-8 flex items-center justify-center bg-yellow-400 rounded-full hover:rotate-45 transition-transform duration-300 cursor-pointer"
       >

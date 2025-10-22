@@ -63,7 +63,7 @@ const sizeClass = computed(() => {
     case 'sm':
       return 'font-normal text-xs md:text-sm lg:text-sm xl:text-lg'
     case 'md':
-      return 'text-xs sm:text-sm xl:text-base'
+      return 'text-sm sm:text-base xl:text-lg'
     case 'lg':
       return 'text-lg sm:text-2xl md:text-3xl'
     case 'xl':
