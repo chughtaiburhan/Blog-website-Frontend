@@ -59,6 +59,7 @@ const weightClass = computed(() => {
 
 const sizeClass = computed(() => {
   switch (props.size) { 
+    case 'xs':'font-light text-xs'
     case 'sm':
       return 'font-normal text-xs md:text-sm lg:text-sm xl:text-lg'
     case 'md':

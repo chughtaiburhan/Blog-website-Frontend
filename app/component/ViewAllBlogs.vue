@@ -1,6 +1,89 @@
 <script setup lang="ts">
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useItemList } from "~/stores/useListItem";
+import { useBlogStore } from "~/stores/useBlog";
 import Button from "./Button.vue";
 import Text from "./Text.vue";
+
+const route = useRoute();
+const router = useRouter();
+
+// ---------- STORES ----------
+const lIStore = useItemList();
+const blogStore = useBlogStore();
+
+// ---------- LOCAL STATE ----------
+const categories = ref<string[]>([]);
+const posts = ref<any[]>([]);
+
+const fetchData = async () => {
+  await lIStore.fetchItemList();
+  await blogStore.fetchBlogsDataList();
+
+  posts.value = blogStore.blogsData;
+  categories.value = blogStore.blogsData.map((b) => b.categoryId?.name);
+};
+
+onMounted(fetchData);
+
+const selectedItem = computed(() =>
+  lIStore.items.find((item) => item.slug === route.params.slug)
+);
+
+const displayedBlogs = computed(() => {
+  const allPosts = posts.value;
+  const currentCategory = selectedItem.value;
+
+  if (!currentCategory) return allPosts;
+
+  return allPosts.filter((post) => {
+    const categoryName = post.categoryId?.name || "";
+    const selectedCategory = currentCategory.name || "";
+    return categoryName.includes(selectedCategory);
+  });
+});
+
+const activeItemId = ref<string | null>(null);
+
+const handleCategoryRoute = async (item: {
+  id: string;
+  slug?: string;
+  name?: string;
+}) => {
+  activeItemId.value = item.id;
+  const listItem = lIStore.items.find((val) =>
+    item.slug ? val.slug === item.slug : val.id === item.id
+  );
+  if (!listItem) return;
+
+  if (route.path === "/") {
+    blogStore.blogsData = [];
+    await blogStore.fetchBlogsDataList(listItem.slug);
+    posts.value = blogStore.blogsData;
+  } else {
+    router.push(`/${listItem.slug}`);
+  }
+};
+
+const handleViewBlog = (slug: string) => {
+  router.push(`/blog/${slug}`);
+};
+
+useHead(() => {
+  const first = lIStore.items[0];
+  return {
+    title: first?.seoTitle || "Explore FutureTech Blogs",
+    meta: [
+      {
+        name: "description",
+        content:
+          first?.seoDescription ||
+          "Discover the latest technology and innovations.",
+      },
+    ],
+  };
+});
 </script>
 
 <template>
@@ -28,59 +111,178 @@ import Text from "./Text.vue";
         color="secondary"
         class="mt-2 px-20 sm:px-4"
         iconColor="yellow"
-        @click="() => console.log('Blogs clicked')"
+        @click="() => router.push('/blog')"
       />
     </div>
   </div>
+
   <div class="bg-black">
-  <div class="py-8 border-b border-[#282828]">
-    <div class="flex justify-center space-x-10">
-      <Button
-        text="All Blogs"
-        color="secondary"
-        class="py-4 px-8 font-normal"
-        @click="() => console.log('Blogs clicked')"
-      />
+    <div class="py-8 border-b border-[#282828]">
+      <div class="flex justify-center space-x-10">
+        <Button
+          v-for="item in lIStore.items"
+          :key="item.id"
+          :text="item.name"
+          :color="activeItemId === item.id ? 'yellow' : 'secondary'"
+          class="py-4 px-8 font-normal"
+          @click="() => handleCategoryRoute(item)"
+        />
+      </div>
     </div>
-  </div>
-  <!-- Blogs -->
-  <div class="main_padding flex justify-between items-center h-auto py-20">
-    <!-- imgs -->
-    <div class="w-[30%]">
-      <NuxtImg format="webp" quality="80" loading="lazy" src=""  alt="BlogsImg" />
+
+    <div
+      v-if="blogStore.loading || displayedBlogs.length === 0"
+      class="main-list-skeleton"
+    >
+      <div
+        v-for="i in 3"
+        :key="i"
+        class="main_padding flex flex-col lg:flex-row justify-between items-center lg:items-center h-auto space-y-5 lg:space-y-0 lg:space-x-12 py-10 border-b border-[#282828] animate-pulse"
+      >
+        <div class="w-full lg:w-[30%] px-2 lg:px-0">
+          <div
+            role="status"
+            class="flex items-center justify-center h-56 max-w-full bg-[#282828] rounded-2xl dark:bg-gray-700"
+          >
+            <svg
+              class="w-10 h-10 text-gray-400 dark:text-gray-600"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 16 20"
+            >
+              <path
+                d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"
+              />
+              <path
+                d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2ZM9 13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2Zm4 .382a1 1 0 0 1-1.447.894L10 13v-2l1.553-1.276a1 1 0 0 1 1.447.894v2.764Z"
+              />
+            </svg>
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+
+        <div
+          class="w-full lg:w-[50%] flex flex-col items-start justify-start space-y-3"
+        >
+          <div class="h-4 w-40 bg-[#282828] rounded-md"></div>
+          <div class="h-8 w-full bg-[#282828] rounded-md"></div>
+          <div class="h-4 w-11/12 bg-[#282828] rounded-md"></div>
+          <div class="h-4 w-10/12 bg-[#282828] rounded-md"></div>
+        </div>
+
+        <div
+          class="w-full px-2 lg:hidden space-x-3 items-start justify-start flex"
+        >
+          <div class="h-10 w-20 bg-[#282828] rounded-lg"></div>
+          <div class="h-10 w-20 bg-[#282828] rounded-lg"></div>
+        </div>
+
+        <div class="w-full lg:w-[20%]">
+          <div class="h-12 w-full bg-[#282828] rounded-lg"></div>
+        </div>
+      </div>
     </div>
-    <!-- data -->
-    <div class="w-[50%] flex flex-col items-start justify-start space-y-10">
-      <Text
-        text="A Knowledge Treasure Trove"
-        size="sm"
-        color="white"
-        class="px-2 p-1 inline-block bg-[#282828]"
-      />
-       <Text
-        text="The Quantum Leap in Computing"
-        size="sm"
-        color="white"
-        class="px-2 p-1 inline-block bg-[#282828]"
-      />
-      <Text
-        text="Explore the revolution in quantum computing, its applications, and its potential impact on various industries."
-        size="sm"
-        color="white"
-        class="px-2 p-1 inline-block bg-[#282828]"
-      />
+
+    <div v-else>
+      <div
+        v-for="blog in displayedBlogs"
+        :key="blog._id"
+        class="main_padding flex flex-col lg:flex-row justify-between items-center lg:items-center h-auto space-y-5 lg:space-y-0 lg:space-x-12 py-10 border-b border-[#282828]"
+      >
+        <div class="w-full lg:w-[30%] px-2 lg:px-0">
+          <div
+            v-if="!blog.image"
+            role="status"
+            class="flex items-center justify-center h-56 max-w-full bg-gray-300 rounded-lg animate-pulse dark:bg-gray-700"
+          >
+            <svg
+              class="w-10 h-10 text-gray-200 dark:text-gray-600"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 16 20"
+            >
+              <path
+                d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"
+              />
+              <path
+                d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2ZM9 13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2Zm4 .382a1 1 0 0 1-1.447.894L10 13v-2l1.553-1.276a1 1 0 0 1 1.447.894v2.764Z"
+              />
+            </svg>
+            <span class="sr-only">Loading...</span>
+          </div>
+          <NuxtImg
+            v-else
+            format="webp"
+            quality="80"
+            loading="lazy"
+            :src="blog.image || ''"
+            :alt="blog.title"
+            class="w-4/4 lg:w-[100%] rounded-2xl"
+          />
+        </div>
+
+        <div
+          class="w-full lg:w-[50%] flex flex-col items-start justify-start space-y-1"
+        >
+          <Text
+            :text="`${blog.authorId.name} • ${blog.createdAt}`"
+            size="sm"
+            color="secondary"
+            class="px-2 inline-block"
+          />
+          <Text
+            :text="blog.title"
+            size="2xl"
+            color="white"
+            class="px-2 inline-block"
+          />
+          <Text
+            :text="blog.description"
+            size="sm"
+            color="white"
+            class="px-2 inline-block"
+          />
+          <Text
+            :text="blog.categoryId?.name"
+            size="sm"
+            color="primary"
+            class="px-2 inline-block"
+          />
+        </div>
+
+        <div
+          class="w-full px-2 lg:hidden space-x-3 items-start justify-start flex"
+        >
+          <Button
+            :text="String(blog.likes?.length || 0)"
+            icon="mdi:heart"
+            color="secondary"
+            class="sm:px-4"
+            iconColor="yellow"
+            @click="() => handleViewBlog(blog._id)"
+          />
+          <Button
+            :text="String(blog.comments?.length || 0)"
+            icon="mdi:comment-text"
+            color="secondary"
+            class="sm:px-4"
+            iconColor="yellow"
+            @click="() => handleViewBlog(blog._id)"
+          />
+        </div>
+        <div class="w-full lg:w-[20%]">
+          <Button
+            text="View Blog"
+            icon="mdi:arrow-top-right"
+            color="secondary"
+            class="sm:px-4 w-full"
+            iconColor="yellow"
+            @click="() => handleViewBlog(blog._id)"
+          />
+        </div>
+      </div>
     </div>
-    <!-- button -->
-    <div class="w-[20%] items-end justify-end flex">
-      <Button
-        text="View Blogs"
-        icon="mdi:arrow-top-right"
-        color="secondary"
-        class="mt-2  sm:px-4"
-        iconColor="yellow"
-        @click="() => console.log('Blogs clicked')"
-      />
-    </div>
-  </div>
   </div>
 </template>

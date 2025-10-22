@@ -49,7 +49,7 @@ const emit = defineEmits(['click'])
 const colorClasses = computed(() => {
   switch (props.color) {
     case 'secondary':
-      return 'bg-transparent  border border-[#282828] text-white hover:border-[#ffd119]'
+      return 'bg-transparent font-normal border border-[#282828] text-white hover:border-[#ffd119]'
     default:
       return 'bg-[#ffd119] text-black focus:ring-[#ffd119]'
   }
