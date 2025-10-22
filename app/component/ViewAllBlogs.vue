@@ -5,6 +5,8 @@ import { useItemList } from "~/stores/useListItem";
 import { useBlogStore } from "~/stores/useBlog";
 import Button from "./Button.vue";
 import Text from "./Text.vue";
+import CategoryButton from "./CategoryButton.vue";
+import BlogSkeleton from "./BlogSkeleton.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -61,9 +63,7 @@ const handleCategoryRoute = async (item: {
     blogStore.blogsData = [];
     await blogStore.fetchBlogsDataList(listItem.slug);
     posts.value = blogStore.blogsData;
-  } else {
-    router.push(`/${listItem.slug}`);
-  }
+  };
 };
 
 const handleViewBlog = (slug: string) => {
@@ -111,79 +111,21 @@ useHead(() => {
         color="secondary"
         class="mt-2 px-20 sm:px-4"
         iconColor="yellow"
-        @click="() => router.push('/blog')"
+        @click="() => router.push('/view-blog')"
       />
     </div>
   </div>
 
   <div class="bg-black">
-    <div class="py-8 border-b border-[#282828]">
-      <div class="flex justify-center space-x-10">
-        <Button
-          v-for="item in lIStore.items"
-          :key="item.id"
-          :text="item.name"
-          :color="activeItemId === item.id ? 'yellow' : 'secondary'"
-          class="py-4 px-8 font-normal"
-          @click="() => handleCategoryRoute(item)"
-        />
-      </div>
-    </div>
-
-    <div
-      v-if="blogStore.loading || displayedBlogs.length === 0"
-      class="main-list-skeleton"
-    >
-      <div
-        v-for="i in 3"
-        :key="i"
-        class="main_padding flex flex-col lg:flex-row justify-between items-center lg:items-center h-auto space-y-5 lg:space-y-0 lg:space-x-12 py-10 border-b border-[#282828] animate-pulse"
-      >
-        <div class="w-full lg:w-[30%] px-2 lg:px-0">
-          <div
-            role="status"
-            class="flex items-center justify-center h-56 max-w-full bg-[#282828] rounded-2xl dark:bg-gray-700"
-          >
-            <svg
-              class="w-10 h-10 text-gray-400 dark:text-gray-600"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 16 20"
-            >
-              <path
-                d="M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z"
-              />
-              <path
-                d="M14.066 0H7v5a2 2 0 0 1-2 2H0v11a1.97 1.97 0 0 0 1.934 2h12.132A1.97 1.97 0 0 0 16 18V2a1.97 1.97 0 0 0-1.934-2ZM9 13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2Zm4 .382a1 1 0 0 1-1.447.894L10 13v-2l1.553-1.276a1 1 0 0 1 1.447.894v2.764Z"
-              />
-            </svg>
-            <span class="sr-only">Loading...</span>
-          </div>
-        </div>
-
-        <div
-          class="w-full lg:w-[50%] flex flex-col items-start justify-start space-y-3"
-        >
-          <div class="h-4 w-40 bg-[#282828] rounded-md"></div>
-          <div class="h-8 w-full bg-[#282828] rounded-md"></div>
-          <div class="h-4 w-11/12 bg-[#282828] rounded-md"></div>
-          <div class="h-4 w-10/12 bg-[#282828] rounded-md"></div>
-        </div>
-
-        <div
-          class="w-full px-2 lg:hidden space-x-3 items-start justify-start flex"
-        >
-          <div class="h-10 w-20 bg-[#282828] rounded-lg"></div>
-          <div class="h-10 w-20 bg-[#282828] rounded-lg"></div>
-        </div>
-
-        <div class="w-full lg:w-[20%]">
-          <div class="h-12 w-full bg-[#282828] rounded-lg"></div>
-        </div>
-      </div>
-    </div>
-
+    <CategoryButton
+      :items="lIStore.items"
+      :activeItemId="activeItemId"
+      :onSelect="handleCategoryRoute"
+    />
+    <template v-if="blogStore.loading || displayedBlogs.length === 0">
+      <BlogSkeleton :show="true" :count="3" />
+    </template>
+    
     <div v-else>
       <div
         v-for="blog in displayedBlogs"
