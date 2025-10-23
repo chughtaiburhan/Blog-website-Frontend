@@ -116,7 +116,7 @@ useHead(() => {
     </div>
   </div>
 
-  <div class="bg-black">
+  <div class="bg-[#0a0a0a]">
     <CategoryButton
       :items="lIStore.items"
       :activeItemId="activeItemId"

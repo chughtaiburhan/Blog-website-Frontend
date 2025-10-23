@@ -1,12 +1,29 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import Button from "./Button.vue";
 import Text from "./Text.vue";
+
+// Toggle for modal visibility
+const showModal = ref(false);
+
+// Google Drive file info
+const fileId = "1O6T9RE_SJ_XG-noR6G9tEeebEN_sRhMZ";
+const previewLink = `https://drive.google.com/file/d/${fileId}/preview`;
+const downloadLink = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
+// Safe open function for TypeScript
+const openDownload = () => {
+  if (typeof window !== "undefined") {
+    window.open(downloadLink, "_blank");
+  }
+};
 </script>
 
 <template>
-  <div class="main_padding bg-black">
+  <div class="">
+    <!-- Top Section -->
     <div
-      class="py-10 sm:py-16 lg:py-20 space-y-5 flex-1 lg:flex items-center justify-between"
+      class="main_padding  py-10 sm:py-16 lg:py-20 space-y-5 flex-1 lg:flex items-center justify-between"
     >
       <div class="shrink-0 space-y-2 sm:space-y-5 lg:w-[70%]">
         <Text
@@ -33,11 +50,13 @@ import Text from "./Text.vue";
       </div>
     </div>
 
+    <!-- EBook Section -->
     <div
-      class="grid grid-cols-1 lg:grid-cols-2 justify-center items-center border-y border-[#282828]"
+      class="main_padding bg-[#0a0a0a] grid grid-cols-1 lg:grid-cols-2 justify-center items-center border-t border-[#282828]"
     >
+      <!-- Left Side -->
       <div
-        class="flex flex-col justify-center items-start space-y-2 border-b sm:border-b lg:border-r border-[#282828] h-full py-5"
+        class="flex flex-col justify-center items-start space-y-2 border-b sm:border-b lg:border-b-0 lg:border-r border-[#282828] h-full py-5"
       >
         <NuxtImg
           src="/icons/highlightIcn.svg"
@@ -55,15 +74,19 @@ import Text from "./Text.vue";
           color="secondary"
           class="p-1 inline-block"
         />
+
+        <!-- Download Button -->
         <Button
           text="Download Book Now"
           icon="mdi:download"
           color="secondary"
           class="mt-2 px-10 sm:px-4"
           iconColor="yellow"
+          @click="openDownload"
         />
       </div>
 
+      <!-- Right Side -->
       <div
         class="flex flex-col justify-center items-start py-10 lg:px-5 space-y-5"
       >
@@ -115,6 +138,7 @@ import Text from "./Text.vue";
             />
           </div>
 
+          <!-- Preview Button -->
           <div
             class="px-3 py-2 lg:space-y-2 h-auto flex-1 xl:flex items-center justify-between bg-[#191919] border border-[#282828] rounded-xl"
           >
@@ -126,16 +150,57 @@ import Text from "./Text.vue";
               class="flex justify-start md:justify-start lg:justify-start w-full xl:justify-end pb-2 sm:pb-0"
             >
               <Button
-                text="Preview"
+                text="Preview eBook"
                 icon="mdi:eye"
                 color="secondary"
                 class="px-20 sm:px-4"
                 iconColor="yellow"
+                @click="showModal = true"
               />
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Modal for PDF Preview -->
+    <transition name="fade">
+      <div
+        v-if="showModal"
+        class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 p-4"
+      >
+        <div
+          class="bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg w-full max-w-5xl relative"
+        >
+          <!-- Close Button -->
+          <button
+            @click="showModal = false"
+            class="absolute top-3 right-3 bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition"
+          >
+            ✕ Close
+          </button>
+
+          <!-- PDF Frame -->
+          <iframe
+            :src="previewLink"
+            width="100%"
+            height="600"
+            allow="autoplay"
+            class="w-full rounded-b-2xl"
+          ></iframe>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
