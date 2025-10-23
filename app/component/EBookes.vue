@@ -19,8 +19,7 @@ const openDownload = () => {
 };
 </script>
 
-<template>
-  <div class="">
+<template> 
     <!-- Top Section -->
     <div
       class="main_padding  py-10 sm:py-16 lg:py-20 space-y-5 flex-1 lg:flex items-center justify-between"
@@ -191,8 +190,7 @@ const openDownload = () => {
         </div>
       </div>
     </transition>
-  </div>
-</template>
+ </template>
 
 <style scoped>
 .fade-enter-active,

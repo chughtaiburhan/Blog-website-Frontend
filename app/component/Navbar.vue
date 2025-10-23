@@ -39,6 +39,7 @@ watch(isMenuOpen, (open) => {
         icon="mdi:send"
         color="primary" 
         iconColor="black"
+        to="/signUp"
         @click="() => console.log('SignUp clicked')"
         /> 
     </div>
@@ -81,6 +82,7 @@ watch(isMenuOpen, (open) => {
               color="primary"
               iconColor="black"
               class="w-72"
+              to="/signUp"
               @click="() => { isMenuOpen = false; console.log('SignUp clicked') }"
             />
           </li>

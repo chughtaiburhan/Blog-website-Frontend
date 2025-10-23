@@ -93,8 +93,7 @@ const scrollToSlide = () => {
 }
 </script>
 
-<template>
-  <div class="">
+<template> 
     <!-- Header -->
     <div class="main_padding py-10 sm:py-16 lg:py-20 space-y-5 flex-1 lg:flex items-center justify-between">
       <div class="shrink-0 space-y-2 sm:space-y-5">
@@ -114,7 +113,7 @@ const scrollToSlide = () => {
     </div>
 
     <!-- Desktop Grid -->
-    <div class="hidden md:grid main_padding bg-[#0a0a0a] py-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="hidden md:grid main_padding bg-[#0a0a0a] py-20 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
         v-for="(testimonial, index) in testimonials"
         :key="index"
@@ -226,7 +225,6 @@ const scrollToSlide = () => {
 >
   <Icon icon="mdi:arrow-right-circle" class="w-6 h-6" />
 </button>
-
-    </div>
+ 
   </div>
 </template>

@@ -1,17 +1,26 @@
 @import "tailwindcss";
 
-html,body{
-    background-color: #141414;
-    color: white;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
+html, body {
+  background-color: #141414;
+  color: white;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+
+  /* Hide scrollbar but allow scrolling */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
 }
 
 @layer utilities {
   .padding {
     @apply p-4 sm:p-12 md:p-16 xl:p-20;
   }
+
   .main_padding {
-    @apply px-4 sm:px-12 md:px-16 xl:px-20
+    @apply px-4 sm:px-12 md:px-16 xl:px-20;
   }
 }
