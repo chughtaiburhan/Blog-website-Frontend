@@ -4,8 +4,29 @@ import { Icon } from "@iconify/vue";
 import Text from "~/component/Text.vue";
 import Button from "~/component/Button.vue";
 import RightIllusion from "~/component/RightIllusion.vue";
+import { useUserStore } from "~/stores/useUser";
 
 const passwordShown = ref(false);
+const auth = useUserStore();
+
+const name = ref("");
+const email = ref("");
+const number = ref("");
+const password = ref("");
+
+const handleSignUp = async () => {
+  try {
+    await auth.signup({
+      name: name.value,
+      email: email.value,
+      number: number.value,
+      password: password.value,
+    });
+    navigateTo(`/email-verify?email=${encodeURIComponent(email.value)}`);
+  } catch (error) {
+    console.error("Signup error:", error);
+  }
+};
 
 const togglePasswordVisibility = () => {
   passwordShown.value = !passwordShown.value;
@@ -21,7 +42,7 @@ const togglePasswordVisibility = () => {
     >
       <!-- Left Side -->
       <div class="flex flex-col justify-start items-start">
-        <div class="space-y-3 mb-8">
+        <div class="space-y-3 mb-8 lg:pr-20">
           <Text
             text="Create an Account"
             size="xl"
@@ -31,24 +52,24 @@ const togglePasswordVisibility = () => {
           <Text
             text="Access your account to explore features, connect with others, and continue your journey."
             size="xs"
-            color="secondary"
-            class="lg:pr-20"
           />
         </div>
 
-        <!-- Signup Form -->
         <div class="w-full max-w-xl">
-          <form action="#" method="POST" class="space-y-6">
-            <!-- Full Name -->
+          <form @submit.prevent="handleSignUp" class="space-y-6">
             <div>
               <label
                 for="name"
                 class="flex items-center gap-2 text-sm font-medium text-gray-100 mb-2"
               >
-                <Icon icon="mdi:account-outline" class="text-yellow-400 text-lg" />
+                <Icon
+                  icon="mdi:account-outline"
+                  class="text-yellow-400 text-lg"
+                />
                 Full Name
               </label>
               <input
+                v-model="name"
                 id="name"
                 type="text"
                 name="name"
@@ -59,16 +80,19 @@ const togglePasswordVisibility = () => {
               />
             </div>
 
-            <!-- Email -->
             <div>
               <label
                 for="email"
                 class="flex items-center gap-2 text-sm font-medium text-gray-100 mb-2"
               >
-                <Icon icon="mdi:email-outline" class="text-yellow-400 text-lg" />
+                <Icon
+                  icon="mdi:email-outline"
+                  class="text-yellow-400 text-lg"
+                />
                 Email address
               </label>
               <input
+                v-model="email"
                 id="email"
                 type="email"
                 name="email"
@@ -79,19 +103,22 @@ const togglePasswordVisibility = () => {
               />
             </div>
 
-            <!-- Phone -->
             <div>
               <label
-                for="phone"
+                for="number"
                 class="flex items-center gap-2 text-sm font-medium text-gray-100 mb-2"
               >
-                <Icon icon="mdi:phone-outline" class="text-yellow-400 text-lg" />
+                <Icon
+                  icon="mdi:phone-outline"
+                  class="text-yellow-400 text-lg"
+                />
                 Phone Number
               </label>
               <input
-                id="phone"
+                v-model="number"
+                id="number"
                 type="tel"
-                name="phone"
+                name="number"
                 required
                 inputmode="numeric"
                 pattern="[0-9]*"
@@ -101,28 +128,23 @@ const togglePasswordVisibility = () => {
               />
             </div>
 
-            <!-- Password -->
             <div>
               <div class="flex items-center justify-between">
                 <label
                   for="password"
                   class="flex items-center gap-2 text-sm font-medium text-gray-100 mb-2"
                 >
-                  <Icon icon="mdi:lock-outline" class="text-yellow-400 text-lg" />
+                  <Icon
+                    icon="mdi:lock-outline"
+                    class="text-yellow-400 text-lg"
+                  />
                   Password
-                </label>
-                <div class="text-sm">
-                  <NuxtLink
-                    to="/forgot-password"
-                    class="font-semibold text-[#ffd119] transition duration-150"
-                  >
-                    Forgot password?
-                  </NuxtLink>
-                </div>
+                </label> 
               </div>
 
               <div class="mt-1 relative">
                 <input
+                  v-model="password"
                   id="password"
                   :type="passwordShown ? 'text' : 'password'"
                   name="password"
@@ -145,10 +167,10 @@ const togglePasswordVisibility = () => {
               </div>
             </div>
 
-            <!-- Submit Button -->
             <div>
               <Button
-                text="Create an Account"
+                type="submit"
+                text="CONTINUE"
                 icon="mdi:account-arrow-right"
                 color="secondary"
                 class="w-full my-2 px-10 sm:px-4 hover:bg-yellow-500/20 transition duration-300"
@@ -157,7 +179,6 @@ const togglePasswordVisibility = () => {
             </div>
           </form>
 
-          <!-- Login Redirect -->
           <p class="mt-2 text-center text-sm text-gray-400">
             Already have an account?
             <NuxtLink
@@ -170,8 +191,7 @@ const togglePasswordVisibility = () => {
         </div>
       </div>
 
-      <!-- Right Illustration -->
-      <RightIllusion src="/signupImg.svg" />
+      <RightIllusion src="/forgotPasswordImg.webp" />
     </div>
   </div>
 </template>

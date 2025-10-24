@@ -2,7 +2,32 @@
 import Button from "~/component/Button.vue";
 import RightIllusion from "~/component/RightIllusion.vue";
 import Text from "~/component/Text.vue";
-import { Icon } from "@iconify/vue"; // ✅ import Iconify for icons
+import { Icon } from "@iconify/vue";
+import { ref } from "vue";
+import { useUserStore } from "~/stores/useUser";
+
+const auth = useUserStore();
+const route = useRoute();
+
+const email = ref();
+const otp = ref("");
+onMounted(() => {
+  const queryEmail = route.query.email as string | undefined;
+  if (queryEmail) {
+    email.value = queryEmail;
+  } else {
+    email.value = auth.user?.email;
+  }
+});
+
+const handleVerify = async () => {
+  try {
+    await auth.verifyOtp({ email: email.value, otp: otp.value });
+    navigateTo("/");
+  } catch (err) {
+    console.error("Verification failed:", err);
+  }
+};
 </script>
 
 <template>
@@ -31,17 +56,21 @@ import { Icon } from "@iconify/vue"; // ✅ import Iconify for icons
 
         <!-- Form Section -->
         <div class="w-full max-w-xl">
-          <form action="#" method="POST" class="space-y-6">
+          <form @submit.prevent="handleVerify" method="POST" class="space-y-6">
             <!-- Email Field -->
             <div>
               <label
                 for="email"
                 class="flex items-center gap-2 text-sm font-medium text-gray-100 mb-2"
               >
-                <Icon icon="mdi:email-outline" class="text-yellow-400 text-lg" />
+                <Icon
+                  icon="mdi:email-outline"
+                  class="text-yellow-400 text-lg"
+                />
                 Email address
               </label>
               <input
+                v-model="email"
                 id="email"
                 type="email"
                 name="email"
@@ -65,6 +94,7 @@ import { Icon } from "@iconify/vue"; // ✅ import Iconify for icons
                 Enter OTP
               </label>
               <input
+                v-model="otp"
                 id="otp"
                 type="text"
                 name="otp"
@@ -79,7 +109,8 @@ import { Icon } from "@iconify/vue"; // ✅ import Iconify for icons
             <!-- Submit Button -->
             <div>
               <Button
-                text="Verify OTP"
+              type="submit"
+                text="SIGN UP"
                 icon="mdi:check-circle-outline"
                 color="secondary"
                 class="w-full my-2 px-10 sm:px-4 hover:bg-yellow-500/20 transition duration-300"
